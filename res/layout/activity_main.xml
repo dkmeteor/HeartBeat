@@ -25,6 +25,7 @@
         android:id="@+id/chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CHAT TEST" />
-    
+        android:text="CHAT TEST"
+        android:visibility="invisible" />
+
 </LinearLayout>

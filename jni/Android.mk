@@ -16,7 +16,9 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := hello-jni
-LOCAL_SRC_FILES := hello-jni.c
+LOCAL_MODULE    := jadeR
+LOCAL_SRC_FILES := jadeR.c
 
 include $(BUILD_SHARED_LIBRARY)
+
+APP_CFLAGS += -Wno-error=format-security

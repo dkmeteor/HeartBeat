@@ -60,7 +60,8 @@ public class DecodeActivity extends Activity {
 	// .getExternalStorageDirectory()
 	// + "/DCIM/Camera/VID_20140216_011502.mp4";
 
-	private static final String path = "/mnt/sdcard/Download/1114.mov";
+	 private static final String path = "/mnt/sdcard/Download/1114.mov";
+//	private static final String path = "/mnt/sdcard/Download/VID_20140216_011502.mp4";
 	// private static final String log =
 	// Environment.getExternalStorageDirectory()
 	// + "/DCIM/Camera/log.txt";
