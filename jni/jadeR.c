@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,25 @@
  * limitations under the License.
  *
  */
-#include <jni.h>
 #include <string.h>
+#include <jni.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
 /* This is a trivial JNI example where we use a native method
  * to return a new VM String. See the corresponding Java source
  * file located at:
  *
- *   apps/samples/hello-jni/project/src/com/example/hellojni/HelloJni.java
+ * apps/samples/hello-jni/project/src/com/example/hellojni/HelloJni.java
  */
-jstring Java_com_example_hellojni_HelloJni_stringFromJNI(JNIEnv* env,
-		jobject thiz) {
-	return (*env)->NewStringUTF(env, "Hello from JNI !");
-}
+
+#define VERBOSITY 0
+#define RELATIVE_JD_THRESHOLD 1.0e-4
+/* A `null' Jacobi rotation for joint diagonalization is smaller than
+ RELATIVE_JD_THRESHOLD/sqrt(T) where T is the number of samples */
+#define RELATIVE_W_THRESHOLD 1.0e-12
+/* A null Jacobi rotation for the whitening is smaller than
+ RELATIVE_W_THRESHOLD/sqrt(T) where T is the number of samples */
 
 void PrintMat(double *mat, int idim, int jdim) {
 	int i, j;
@@ -40,7 +43,6 @@ void PrintMat(double *mat, int idim, int jdim) {
 	}
 	return;
 }
-
 // A corriger pour colwise
 /* Prints a stack of K matrices of size NxN */
 void PrintStack(double *S, int N, int K) {
@@ -62,7 +64,7 @@ void Uniform(double *vec, int T) {
 		vec[i] = 2.0 * ((double) rand() / (double) RAND_MAX) - 1.0;
 }
 
-/*  More or less normal-randomize a vector */
+/* More or less normal-randomize a vector */
 void Gaussian(double *Vec, int p) {
 	int i, cpt;
 	double data;
@@ -78,7 +80,6 @@ void Gaussian(double *Vec, int p) {
 void TransposeSimple(double *A, double *B, int m, int n) {
 	int rowA;
 	int colA;
-
 	for (rowA = 0; rowA < n; rowA++)
 		for (colA = 0; colA < m; colA++)
 			A[rowA + m * colA] = B[colA + n * rowA];
@@ -88,7 +89,6 @@ void TransposeSimple(double *A, double *B, int m, int n) {
 void TransposeInPlace(double *A, int m) {
 	int i, j;
 	double temp;
-
 	for (i = 0; i < m; i++)
 		for (j = i + 1; j < m; j++) {
 			temp = A[i * m + j];
@@ -102,7 +102,6 @@ double Norme2(double *v, int n) {
 	double sum = 0.0;
 	double entry;
 	int p;
-
 	for (p = 0; p < n; p++) {
 		entry = v[p];
 		sum += entry * entry;
@@ -115,7 +114,6 @@ double Trace(double *A, int n) {
 	double sum = 0.0;
 	int maxind = n * n;
 	int p;
-
 	for (p = 0; p < maxind; p++) {
 		sum += A[p];
 		p += n; /* Ah, Ah, Ah */
@@ -123,13 +121,12 @@ double Trace(double *A, int n) {
 	return sum;
 }
 
-/* A(mxp) = B(mxn) x  C(nxp)   */
+/* A(mxp) = B(mxn) x C(nxp) */
 void MatMultSimple(double *A, double *B, double *C, int m, int n, int p) {
 	int rowA;
 	int colA;
 	int current;
 	double sum;
-
 	for (rowA = 0; rowA < m; rowA++)
 		for (colA = 0; colA < p; colA++) {
 			sum = 0.0;
@@ -140,13 +137,12 @@ void MatMultSimple(double *A, double *B, double *C, int m, int n, int p) {
 }
 
 // A corriger pour colwise
-/* R = A*A'  R: mxm  A:mxT   */
+/* R = A*A' R: mxm A:mxT */
 void Gramm(double *R, double *A, int m, int T) {
 	int i, j, run;
 	int istart = 0;
 	int jstart = 0;
 	double sum;
-
 	for (i = 0; i < m; i++, istart += T)
 		for (j = i, jstart = i * T; j < m; j++, jstart += T) {
 			sum = 0.0;
@@ -176,37 +172,25 @@ void ComputeAutoCum(double *Acums, double *X, int n, int T) {
 	}
 }
 
-#define VERBOSITY 0
-
-#define RELATIVE_JD_THRESHOLD  1.0e-4
-/* A `null' Jacobi rotation for joint diagonalization is smaller than
- RELATIVE_JD_THRESHOLD/sqrt(T) where T is the number of samples */
-
-#define RELATIVE_W_THRESHOLD  1.0e-12
-/* A null Jacobi rotation for the whitening is smaller than
- RELATIVE_W_THRESHOLD/sqrt(T) where T is the number of samples */
-
 void OutOfMemory() {
 	printf("Out of memory, sorry...\n");
 	exit(EXIT_FAILURE);
 }
 
 #define SPACE_PER_LEVEL 3
-
 void Message0(int level, char *mess) {
-	int count;
-	if (level < VERBOSITY) {
-		for (count = 0; count < level * SPACE_PER_LEVEL; count++)
-			fprintf(stderr, " ");
-//    fprintf(stderr, mess);
-	}
+// int count ;
+// if (level < VERBOSITY) {
+// for (count=0; count<level*SPACE_PER_LEVEL; count++) fprintf(stderr," ");
+// fprintf(stderr, mess);
+// }
 }
 void MessageF(int level, char *mess, double value) {
 	int count;
 	if (level < VERBOSITY) {
 		for (count = 0; count < level * SPACE_PER_LEVEL; count++)
 			fprintf(stderr, " ");
-//    fprintf(stderr, mess, value);
+		fprintf(stderr, mess, value);
 	}
 }
 void MessageI(int level, char *mess, int value) {
@@ -214,10 +198,9 @@ void MessageI(int level, char *mess, int value) {
 	if (level < VERBOSITY) {
 		for (count = 0; count < level * SPACE_PER_LEVEL; count++)
 			fprintf(stderr, " ");
-//    fprintf(stderr, mess, value);
+		fprintf(stderr, mess, value);
 	}
 }
-
 void Identity(double *Mat, int p) {
 	int i;
 	int p2 = p * p;
@@ -243,21 +226,18 @@ double NonIdentity(double *Mat, int p) {
 	return sum;
 }
 
-/* X=Trans*X : computes IN PLACE the transformation X=Trans*X.  X: nxT, Trans: nxn */
+/* X=Trans*X : computes IN PLACE the transformation X=Trans*X. X: nxT, Trans: nxn */
 void Transform(double *X, double *Trans, int n, int T) {
 	double *Tx; /* buffer for a column vector */
 	int i, s, t;
 	int Xind, Xstart, Xstop;
 	double sum;
-
 	Tx = (double *) calloc(n, sizeof(double));
 	if (Tx == NULL)
 		OutOfMemory();
-
 	for (t = 0; t < T; t++) {
 		Xstart = t * n;
 		Xstop = Xstart + n;
-
 		/* stores in Tx the t-th colum of X transformed by Trans */
 		for (i = 0; i < n; i++) {
 			sum = 0.0;
@@ -265,7 +245,6 @@ void Transform(double *X, double *Trans, int n, int T) {
 				sum += Trans[s] * X[Xind];
 			Tx[i] = sum;
 		}
-
 		/* plugs the transformed vector back in the orignal matrix */
 		for (i = 0, Xind = Xstart; i < n; i++, Xind++)
 			X[Xind] = Tx[i];
@@ -277,16 +256,13 @@ void EstCovMat(double *R, double *A, int m, int T) {
 	int i, j, t;
 	double *x;
 	double ust = 1.0 / (double) T;
-
 	for (i = 0; i < m; i++)
 		for (j = i; j < m; j++)
 			R[i + j * m] = 0.0;
-
 	for (t = 0, x = A; t < T; t++, x += m)
 		for (i = 0; i < m; i++)
 			for (j = i; j < m; j++)
 				R[i + j * m] += x[i] * x[j];
-
 	for (i = 0; i < m; i++)
 		for (j = i; j < m; j++) {
 			R[i + j * m] = ust * R[i + j * m];
@@ -295,13 +271,12 @@ void EstCovMat(double *R, double *A, int m, int T) {
 }
 
 /* rem: does not depend on n,of course: remove the argument */
-/* A(mxn) --> A(mxn) x R where R=[ c s ; -s c ]  rotates the (p,q) columns of R */
+/* A(mxn) --> A(mxn) x R where R=[ c s ; -s c ] rotates the (p,q) columns of R */
 void RightRotSimple(double *A, int m, int n, int p, int q, double c, double s) {
 	double nx, ny;
 	int ix = p * m;
 	int iy = q * m;
 	int i;
-
 	for (i = 0; i < m; i++) {
 		nx = A[ix];
 		ny = A[iy];
@@ -309,7 +284,6 @@ void RightRotSimple(double *A, int m, int n, int p, int q, double c, double s) {
 		A[iy++] = s * nx + c * ny;
 	}
 }
-
 /* Ak(mxn) --> Ak(mxn) x R where R rotates the (p,q) columns R =[ c s ; -s c ]
  and Ak is the k-th M*N matrix in the stack */
 void RightRotStack(double *A, int M, int N, int K, int p, int q, double c,
@@ -318,7 +292,6 @@ void RightRotStack(double *A, int M, int N, int K, int p, int q, double c,
 	int pM = p * M;
 	int qM = q * M;
 	double nx, ny;
-
 	for (k = 0, kMN = 0; k < K; k++, kMN += M * N)
 		for (cpt = 0, ix = pM + kMN, iy = qM + kMN; cpt < M; cpt++) {
 			nx = A[ix];
@@ -329,14 +302,13 @@ void RightRotStack(double *A, int M, int N, int K, int p, int q, double c,
 }
 
 /*
- A(mxn) --> R * A(mxn) where R=[ c -s ; s c ]   rotates the (p,q) rows of R
+ A(mxn) --> R * A(mxn) where R=[ c -s ; s c ] rotates the (p,q) rows of R
  */
 void LeftRotSimple(double *A, int m, int n, int p, int q, double c, double s) {
 	int ix = p;
 	int iy = q;
 	double nx, ny;
 	int j;
-
 	for (j = 0; j < n; j++, ix += m, iy += m) {
 		nx = A[ix];
 		ny = A[iy];
@@ -355,7 +327,6 @@ void LeftRotStack(double *A, int M, int N, int K, int p, int q, double c,
 	int MN = M * N;
 	int kMN;
 	double nx, ny;
-
 	for (k = 0, kMN = 0; k < K; k++, kMN += MN)
 		for (cpt = 0, ix = p + kMN, iy = q + kMN; cpt < N; cpt++, ix += M, iy +=
 				M) {
@@ -366,48 +337,40 @@ void LeftRotStack(double *A, int M, int N, int K, int p, int q, double c,
 		}
 }
 
-/* Givens angle for the pair (p,q) of an mxm matrix A   */
+/* Givens angle for the pair (p,q) of an mxm matrix A */
 double Givens(double *A, int m, int p, int q) {
 	double pp = A[p + m * p];
 	double qq = A[q + m * q];
 	double pq = A[p + m * q];
 	double qp = A[q + m * p];
-
 	if (pp > qq)
 		return 0.5 * atan2(-pq - qp, pp - qq);
 	else
 		return 0.5 * atan2(pq + qp, qq - pp);
-
 }
-
 /* Givens angle for the pair (p,q) of a stack of K M*M matrices */
 double GivensStack(double *A, int M, int K, int p, int q) {
 	int k;
 	double diff_on, sum_off, ton, toff;
-	double *cm; /* A cumulant matrix  */
+	double *cm; /* A cumulant matrix */
 	double G11 = 0.0;
 	double G12 = 0.0;
 	double G22 = 0.0;
-
 	int M2 = M * M;
 	int pp = p + p * M;
 	int pq = p + q * M;
 	int qp = q + p * M;
 	int qq = q + q * M;
-
 	for (k = 0, cm = A; k < K; k++, cm += M2) {
 		diff_on = cm[pp] - cm[qq];
 		sum_off = cm[pq] + cm[qp];
-
 		G11 += diff_on * diff_on;
 		G22 += sum_off * sum_off;
 		G12 += diff_on * sum_off;
 	}
 	ton = G11 - G22;
 	toff = 2.0 * G12;
-
 	return -0.5 * atan2(toff, ton + sqrt(ton * ton + toff * toff));
-
 	/* there is no final minus sign in the matlab code because the
 	 convention for c/s in the Givens rotations is the opposite ??? */
 }
@@ -420,10 +383,8 @@ int Diago(double *A, double *R, int m, double threshold) {
 	int rots = 0;
 	int p, q;
 	double theta, c, s;
-
 	Identity(R, m);
-
-	/* Sweeps until no pair gets updated  */
+	/* Sweeps until no pair gets updated */
 	while (encore > 0) {
 		encore = 0;
 		for (p = 0; p < m; p++)
@@ -450,10 +411,8 @@ int JointDiago(double *A, double *R, int M, int K, double threshold) {
 	int more = 1;
 	int p, q;
 	double theta, c, s;
-
 	Identity(R, M);
-
-	while (more > 0) /* One sweep through a stack of K symmetric M*M matrices.  */
+	while (more > 0) /* One sweep through a stack of K symmetric M*M matrices. */
 	{
 		more = 0;
 		for (p = 0; p < M; p++)
@@ -473,20 +432,16 @@ int JointDiago(double *A, double *R, int M, int K, double threshold) {
 	return rots;
 }
 
-/* W = sqrt(inv(cov(X)))  */
+/* W = sqrt(inv(cov(X))) */
 void ComputeWhitener(double *W, double *X, int n, int T) {
 	double threshold_W = RELATIVE_W_THRESHOLD / sqrt((double) T);
 	double *Cov = (double *) calloc(n * n, sizeof(double));
 	double rescale;
 	int i, j;
-
 	if (Cov == NULL)
 		OutOfMemory();
-
 	EstCovMat(Cov, X, n, T);
-
 	Diago(Cov, W, n, threshold_W);
-
 	for (i = 0; i < n; i++) {
 		rescale = 1.0 / sqrt(Cov[i + i * n]);
 		for (j = 0; j < n; j++)
@@ -495,48 +450,41 @@ void ComputeWhitener(double *W, double *X, int n, int T) {
 	free(Cov);
 }
 
-/* X: nxT, C: nxnxn.  Computes a stack of n cumulant matrices.  */
+/* X: nxT, C: nxnxn. Computes a stack of n cumulant matrices. */
 void EstCumMats(double *C, double *X, int n, int T) {
-	double *x; /* pointer to a data vector in the data matrix  */
+	double *x; /* pointer to a data vector in the data matrix */
 	double *tm; /* temp matrix */
 	double *R; /* EXX' : WE DO NOT ASSUME WHITE DATA */
-
 	double xk2, xijkk, xij;
 	double ust = 1.0 / (float) T;
-
 	int n2 = n * n;
 	int n3 = n * n * n;
 	int i, j, k, t, kdec, index;
-
 	Message0(3, "Memory allocation and reset...\n");
 	tm = (double *) calloc(n * n, sizeof(double));
 	R = (double *) calloc(n * n, sizeof(double));
-
 	if (tm == NULL || R == NULL)
 		OutOfMemory();
-
 	for (i = 0; i < n3; i++)
 		C[i] = 0.0;
 	for (i = 0; i < n2; i++)
 		R[i] = 0.0;
-
 	Message0(3, "Computing some moments...\n");
 	for (t = 0, x = X; t < T; t++, x += n) {
-		for (i = 0; i < n; i++) /* External product (and accumulate for the covariance)  */
+		for (i = 0; i < n; i++) /* External product (and accumulate for the covariance) */
 			for (j = i; j < n; j++) /* We do not set the symmetric parts yet */
 			{
 				xij = x[i] * x[j];
 				tm[i + j * n] = xij;
 				R[i + j * n] += xij;
 			}
-
 		/* Accumulate */
 		for (k = 0; k < n; k++) {
 			xk2 = tm[k + k * n]; /* x_k^2 */
 			kdec = k * n2; /* pre_computed shift to address the k-th matrx */
 			for (i = 0; i < n; i++)
 				for (j = i, index = i + i * n; j < n; j++, index += n)
-					C[index + kdec] += xk2 * tm[index]; /* filling the lower part is postponed  */
+					C[index + kdec] += xk2 * tm[index]; /* filling the lower part is postponed */
 		}
 	}
 
@@ -548,7 +496,6 @@ void EstCumMats(double *C, double *X, int n, int T) {
 			R[i + j * n] = xij;
 			R[j + i * n] = xij;
 		}
-
 	/* from moments to cumulants and symmetrization */
 	for (k = 0, kdec = 0; k < n; k++, kdec += n2)
 		for (i = 0; i < n; i++)
@@ -562,10 +509,8 @@ void EstCumMats(double *C, double *X, int n, int T) {
 	free(tm);
 	free(R);
 }
-
-#define MC(ii,jj,kk,ll)   C[ ii + jj*n + kk*n2 + ll*n3 ]
-
-/* X: nxT, C: nxnxnxn.  Computes the cumulant tensor.  */
+#define MC(ii,jj,kk,ll) C[ ii + jj*n + kk*n2 + ll*n3 ]
+/* X: nxT, C: nxnxnxn. Computes the cumulant tensor. */
 void EstCumTens(double *C, double *X, int n, int T) {
 	int n2 = n * n;
 	int n3 = n * n * n;
@@ -573,17 +518,14 @@ void EstCumTens(double *C, double *X, int n, int T) {
 	int i, j, k, l, t;
 	double Cijkl, xi, xij, xijk, *x;
 	double ust = 1.0 / (float) T;
-
 	double *R = (double *) calloc(n * n, sizeof(double));
-	/* To store Cov(x).  Recomputed: no whiteness assumption here*/
+	/* To store Cov(x). Recomputed: no whiteness assumption here*/
 	if (R == NULL)
 		OutOfMemory();
-
 	for (i = 0; i < n4; i++)
 		C[i] = 0.0;
 	for (i = 0; i < n2; i++)
 		R[i] = 0.0;
-
 	Message0(3, "Computing 2nd order cumulants...\n");
 	/* accumulation */
 	for (t = 0, x = X; t < T; t++, x += n)
@@ -596,7 +538,6 @@ void EstCumTens(double *C, double *X, int n, int T) {
 			R[i + j * n] = ust * R[i + j * n];
 			R[j + i * n] = R[i + j * n];
 		}
-
 	Message0(3, "Computing 4th order cumulants...\n");
 	/* accumulation */
 	for (t = 0, x = X; t < T; t++, x += n)
@@ -619,31 +560,30 @@ void EstCumTens(double *C, double *X, int n, int T) {
 					Cijkl = ust * MC(i,j,k,l) - R[i + j * n] * R[k + l * n]
 							- R[i + k * n] * R[j + l * n]
 							- R[i + l * n] * R[j + k * n];
-
 					MC(i,j,k,l) = Cijkl;
 					MC(i,j,l,k) = Cijkl;
 					MC(j,i,k,l) = Cijkl;
-					MC(j,i,l,k) = Cijkl; /* ijxx  */
+					MC(j,i,l,k) = Cijkl; /* ijxx */
 					MC(i,k,j,l) = Cijkl;
 					MC(i,k,l,j) = Cijkl;
 					MC(k,i,j,l) = Cijkl;
-					MC(k,i,l,j) = Cijkl; /* ikxx  */
+					MC(k,i,l,j) = Cijkl; /* ikxx */
 					MC(i,l,j,k) = Cijkl;
 					MC(i,l,k,j) = Cijkl;
 					MC(l,i,j,k) = Cijkl;
-					MC(l,i,k,j) = Cijkl; /* ilxx  */
+					MC(l,i,k,j) = Cijkl; /* ilxx */
 					MC(j,k,i,l) = Cijkl;
 					MC(j,k,l,i) = Cijkl;
 					MC(k,j,i,l) = Cijkl;
-					MC(k,j,l,i) = Cijkl; /* jkxx  */
+					MC(k,j,l,i) = Cijkl; /* jkxx */
 					MC(j,l,i,k) = Cijkl;
 					MC(j,l,k,i) = Cijkl;
 					MC(l,j,i,k) = Cijkl;
-					MC(l,j,k,i) = Cijkl; /* jlxx  */
+					MC(l,j,k,i) = Cijkl; /* jlxx */
 					MC(k,l,i,j) = Cijkl;
 					MC(k,l,j,i) = Cijkl;
 					MC(l,k,i,j) = Cijkl;
-					MC(l,k,j,i) = Cijkl; /* klxx  */
+					MC(l,k,j,i) = Cijkl; /* klxx */
 				}
 	free(R);
 }
@@ -652,7 +592,6 @@ void MeanRemoval(double *X, int n, int T) {
 	double sum;
 	double ust = 1.0 / (double) T;
 	int i, t, tstart, tstop;
-
 	for (i = 0; i < n; i++) {
 		tstart = i;
 		tstop = i + n * T;
@@ -664,43 +603,34 @@ void MeanRemoval(double *X, int n, int T) {
 			X[t] -= sum;
 	}
 }
-
-/* _________________________________________________________________  */
-
+/* _________________________________________________________________ */
 void Shibbs(double *B, /* Output. Separating matrix. nbc*nbc */
-double *X, /* Input.  Data set nbc x nbs */
-int nbc, /* Input.  Number of sensors  */
-int nbs /* Input.  Number of samples  */
+double *X, /* Input. Data set nbc x nbs */
+int nbc, /* Input. Number of sensors */
+int nbs /* Input. Number of samples */
 ) {
 	double threshold_JD = RELATIVE_JD_THRESHOLD / sqrt((double) nbs);
-
 	int rots = 1;
-
 	double *Transf = (double *) calloc(nbc * nbc, sizeof(double));
 	double *CumMats = (double *) calloc(nbc * nbc * nbc, sizeof(double));
 	if (Transf == NULL || CumMats == NULL)
 		OutOfMemory();
-
 	/* Init */
 	Message0(2, "Init...\n");
 	Identity(B, nbc);
 	MeanRemoval(X, nbc, nbs);
-
 	Message0(2, "Whitening...\n");
 	ComputeWhitener(Transf, X, nbc, nbs);
 	Transform(X, Transf, nbc, nbs);
 	Transform(B, Transf, nbc, nbc);
-
 	while (rots > 0) {
 		Message0(2, "Computing cumulant matrices...\n");
 		EstCumMats(CumMats, X, nbc, nbs);
-
 		Message0(2, "Joint diagonalization...\n");
 		rots = JointDiago(CumMats, Transf, nbc, nbc, threshold_JD);
 		MessageI(3, "Total number of plane rotations: %6i.\n", rots);
 		MessageF(3, "Size of the total rotation: %10.7e\n",
 				NonIdentity(Transf, nbc));
-
 		Message0(2, "Updating...\n");
 		Transform(X, Transf, nbc, nbs);
 		Transform(B, Transf, nbc, nbc);
@@ -709,30 +639,10 @@ int nbs /* Input.  Number of samples  */
 	free(CumMats);
 }
 
-/* _________________________________________________________________  */
-
-void Java_com_dk_heartbeat_JadeRJni_jade(JNIEnv* env, jobject obj, jdoubleArray data, jdoubleArray output,
-		jint num) {
-//
-//	jdoubleArray *pba = (env)->GetDoubleArrayElements(data, 0 );
-//	jsize len = (env)->GetArrayLength(data);
-//	int i=0;
-//	// change even array elements
-//	for( i=0; i < len; i+=2 )
-//	{
-//	pba[i] = JNI_FALSE;
-//	printf( "boolean = %s/n", (pba[i]==JNI_TRUE ? "true" : "false") );
-//	}
-//	(env)->ReleaseBooleanArrayElements(ba, pba, 0 );
-
-
-//	Jade();
-}
-
 void Jade(double *B, /* Output. Separating matrix. nbc*nbc */
-double *X, /* Input.  Data set nbc x nbs */
-int nbc, /* Input.  Number of sensors  */
-int nbs /* Input.  Number of samples  */
+double *X, /* Input. Data set nbc x nbs */
+int nbc, /* Input. Number of sensors */
+int nbs /* Input. Number of samples */
 ) {
 	double threshold_JD = RELATIVE_JD_THRESHOLD / sqrt((double) nbs);
 	int rots = 1;
@@ -740,32 +650,35 @@ int nbs /* Input.  Number of samples  */
 	double *CumTens = (double *) calloc(nbc * nbc * nbc * nbc, sizeof(double));
 	if (Transf == NULL || CumTens == NULL)
 		OutOfMemory();
-
 	/* Init */
 	Message0(2, "Init...\n");
 	Identity(B, nbc);
-
 	MeanRemoval(X, nbc, nbs);
-
 	Message0(2, "Whitening...\n");
 	ComputeWhitener(Transf, X, nbc, nbs);
 	Transform(X, Transf, nbc, nbs);
 	Transform(B, Transf, nbc, nbc);
-
 	Message0(2, "Estimating the cumulant tensor...\n");
 	EstCumTens(CumTens, X, nbc, nbs);
-
 	Message0(2, "Joint diagonalization...\n");
 	rots = JointDiago(CumTens, Transf, nbc, nbc * nbc, threshold_JD);
 	MessageI(3, "Total number of plane rotations: %6i.\n", rots);
 	MessageF(3, "Size of the total rotation: %10.7e\n",
 			NonIdentity(Transf, nbc));
-
 	Message0(2, "Updating...\n");
 	Transform(X, Transf, nbc, nbs);
 	Transform(B, Transf, nbc, nbc);
-
 	free(Transf);
 	free(CumTens);
 }
 
+JNIEXPORT void Java_com_dk_heartbeat_JadeRJni_doSth(JNIEnv* env,
+jobject thiz, jdoubleArray data, jdoubleArray output) {
+jdouble* d = (*env)->GetDoubleArrayElements(env, data, JNI_FALSE);
+jdouble* o = (*env)->GetDoubleArrayElements(env, output, JNI_FALSE);
+
+jint length = (*env)->GetArrayLength(env, data);
+Jade(o,d,3,256);
+int i = 0;
+
+}

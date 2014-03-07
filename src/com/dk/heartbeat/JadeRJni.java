@@ -21,9 +21,9 @@ import android.os.Bundle;
 
 public class JadeRJni {
 	static {
-		System.loadLibrary("libJadeR.so");
+		System.loadLibrary("jadeR");
 	}
 
-	public native void jade(double[] data, double[] output, int num);
+	public static native void doSth(double[] data, double[] output);
 
 }

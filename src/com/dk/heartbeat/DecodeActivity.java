@@ -60,7 +60,7 @@ public class DecodeActivity extends Activity {
 	// .getExternalStorageDirectory()
 	// + "/DCIM/Camera/VID_20140216_011502.mp4";
 
-	 private static final String path = "/mnt/sdcard/Download/1114.mov";
+	 private static final String path = "/mnt/sdcard/Download/VID_20140307_231413.mov";
 //	private static final String path = "/mnt/sdcard/Download/VID_20140216_011502.mp4";
 	// private static final String log =
 	// Environment.getExternalStorageDirectory()
@@ -172,9 +172,14 @@ public class DecodeActivity extends Activity {
 			G = new int[seconds * 5];
 			B = new int[seconds * 5];
 			for (int i = 0; i < seconds * 5; i++) {
-				Bitmap bitmap = retriever.getFrameAtTime(
-						((long) i) * 1000 * 1000 / 5,
-						MediaMetadataRetriever.OPTION_CLOSEST);
+				Bitmap bitmap=null;
+				try {
+					bitmap = retriever.getFrameAtTime(
+							((long) i) * 1000 * 1000 / 5,
+							MediaMetadataRetriever.OPTION_CLOSEST);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				if (bitmap != null) {
 					int[] pixels = new int[bitmap.getWidth()
 							* bitmap.getHeight()];

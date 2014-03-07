@@ -1,10 +1,10 @@
 obj/local/armeabi/objs/jadeR/jadeR.o: jni/jadeR.c \
- D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/jni.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/string.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/sys/cdefs.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/sys/cdefs_elf.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/android/api-level.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/malloc.h \
+ D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/jni.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/stdio.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/sys/types.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/stdint.h \
@@ -31,8 +31,6 @@ obj/local/armeabi/objs/jadeR/jadeR.o: jni/jadeR.c \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/sys/syslimits.h \
  D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/asm/page.h
 
-D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/jni.h:
-
 D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/string.h:
 
 D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/sys/cdefs.h:
@@ -42,6 +40,8 @@ D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-a
 D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/android/api-level.h:
 
 D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/malloc.h:
+
+D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/jni.h:
 
 D:/WORK/android-ndk-r9-windows-x86_64/android-ndk-r9/platforms/android-18/arch-arm/usr/include/stdio.h:
 

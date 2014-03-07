@@ -29,6 +29,8 @@ public class FFTActivity extends Activity {
 	/** The main renderer that includes all the renderers customizing a chart. */
 	/** The most recently added series. */
 	private XYSeries mCurrentSeriesFFT;
+	private XYSeries mCurrentSeriesFFT2;
+	private XYSeries mCurrentSeriesFFT3;
 	/** The most recently created renderer, customizing the current series. */
 
 	private GraphicalView mChartView;
@@ -41,14 +43,18 @@ public class FFTActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(com.dk.heartbeat.R.layout.xy_chart);
 
-		int[] colors = new int[] { Color.RED };
-		PointStyle[] styles = new PointStyle[] { PointStyle.POINT };
+		int[] colors = new int[] { Color.RED, Color.GREEN, Color.BLUE };
+		PointStyle[] styles = new PointStyle[] { PointStyle.POINT,PointStyle.POINT,PointStyle.POINT };
 		mRenderer = new XYMultipleSeriesRenderer(1);
 		setRenderer(mRenderer, colors, styles);
 
 		mRenderer.setZoomButtonsVisible(true);
 		mCurrentSeriesFFT = new XYSeries("FFT");
+		mCurrentSeriesFFT2 = new XYSeries("FFT2");
+		mCurrentSeriesFFT3 = new XYSeries("FFT3");
 		mDataset.addSeries(mCurrentSeriesFFT);
+		mDataset.addSeries(mCurrentSeriesFFT2);
+		mDataset.addSeries(mCurrentSeriesFFT3);
 
 		FFT();
 
@@ -100,24 +106,66 @@ public class FFTActivity extends Activity {
 	private void FFT() {
 		String text;
 		try {
-			File input = new File(DecodeActivity.log_R);
-			text = readTextFile(new FileInputStream(input));
-			String[] datas = text.split(",");
+			File inputR = new File(DecodeActivity.log_R);
+			String textR = readTextFile(new FileInputStream(inputR));
+			String[] dataR = textR.split(",");
 
-			double[] fftInput = new double[256];
-			for (int i = 0; i < 256; i++) {
+			File inputG = new File(DecodeActivity.log_G);
+			String  textG= readTextFile(new FileInputStream(inputG));
+			String[] dataG = textG.split(",");
+			
+			File inputB = new File(DecodeActivity.log_B);
+			String  textB= readTextFile(new FileInputStream(inputB));
+			String[] dataB = textB.split(",");
+			
+			
+			double[] fftInput = new double[768];
+			for (int i = 0; i < 768; i++) {
 				if (i < 256) {
-					fftInput[i] = Double.parseDouble(datas[i]);
+					fftInput[i] = Double.parseDouble(dataR[i]);
+				}
+				else if(i>=256 && i<512)
+				{
+					fftInput[i] = Double.parseDouble(dataG[i-256]);
+				}
+				else if(i>=512 && i<768)
+				{
+					fftInput[i] = Double.parseDouble(dataB[i-512]);
 				}
 			}
-			DoubleFFT_1D fft = new DoubleFFT_1D(256);
-			fft.realForward(fftInput);
+			double[] fftOutput = new double[768];
 
+			double[] temp = new double[768];
+			temp = fftInput.clone();
+			JadeRJni.doSth(fftInput, fftOutput);
+
+			DoubleFFT_1D fft = new DoubleFFT_1D(256);
+			double[] o1=new double[256];
+			double[] o2=new double[256];
+			double[] o3=new double[256];
+			System.arraycopy(fftInput, 0, o1, 0, 256);
+			System.arraycopy(fftInput, 256, o2, 0, 256);
+			System.arraycopy(fftInput, 512, o3, 0, 256);
+			
+			fft.realForward(fftInput);
+			fft.realForward(temp);
+			fft.realForward(fftOutput);
+			fft.realForward(o1);
+			fft.realForward(o2);
+			fft.realForward(o3);
 			for (int i = 0; i < 256; i++) {
 				System.out.println("" + fftInput[i]);
-				if (Math.abs(fftInput[i]) < 100) {
-					mCurrentSeriesFFT.add(i, fftInput[i]);
+				if (Math.abs(o1[i]) < 100) {
+					mCurrentSeriesFFT.add(i, Math.abs(o1[i]));
+					
 				}
+				if (Math.abs(o2[i]) < 100) {
+				mCurrentSeriesFFT2.add(i, Math.abs((o2[i])));
+				}
+				
+				if (Math.abs(o3[i]) < 100) {
+					mCurrentSeriesFFT3.add(i, Math.abs(o3[i]));
+					}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
