@@ -139,22 +139,22 @@ public class FFTActivity extends Activity {
 			temp = fftInput.clone();
 			JadeRJni.doSth(fftInput, fftOutput);
 
-			DoubleFFT_1D fft = new DoubleFFT_1D(256);
-			double[] o1=new double[256];
-			double[] o2=new double[256];
-			double[] o3=new double[256];
+			DoubleFFT_1D fft = new DoubleFFT_1D(4096);
+			double[] o1=new double[4096];
+			double[] o2=new double[4096];
+			double[] o3=new double[4096];
 			System.arraycopy(fftInput, 0, o1, 0, 256);
 			System.arraycopy(fftInput, 256, o2, 0, 256);
 			System.arraycopy(fftInput, 512, o3, 0, 256);
 			
-			fft.realForward(fftInput);
-			fft.realForward(temp);
-			fft.realForward(fftOutput);
+//			fft.realForward(fftInput);
+//			fft.realForward(temp);
+//			fft.realForward(fftOutput);
 			fft.realForward(o1);
 			fft.realForward(o2);
 			fft.realForward(o3);
-			for (int i = 0; i < 256; i++) {
-				System.out.println("" + fftInput[i]);
+			for (int i = 0; i < 4096; i++) {
+//				System.out.println("" + fftInput[i]);
 				if (Math.abs(o1[i]) < 100) {
 					mCurrentSeriesFFT.add(i, Math.abs(o1[i]));
 					
