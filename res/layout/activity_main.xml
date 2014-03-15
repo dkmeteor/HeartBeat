@@ -22,10 +22,10 @@
         android:text="FFT" />
 
     <Button
-        android:id="@+id/chat"
+        android:id="@+id/bar_chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CHAT TEST"
-        android:visibility="invisible" />
+        android:text="HeartRate"
+        android:visibility="visible" />
 
 </LinearLayout>

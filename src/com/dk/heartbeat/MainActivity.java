@@ -13,7 +13,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		setContentView(R.layout.activity_main);
 		findViewById(R.id.decode).setOnClickListener(this);
 		findViewById(R.id.fft).setOnClickListener(this);
-		findViewById(R.id.chat).setOnClickListener(this);
+		findViewById(R.id.bar_chat).setOnClickListener(this);
 	}
 
 	@Override
@@ -26,13 +26,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.fft:
-
 			intent = new Intent(this, FFTActivity.class);
 			startActivity(intent);
 			break;
-		case R.id.chat:
-
-			intent = new Intent(this, DecodeActivity.class);
+		case R.id.bar_chat:
+			intent = new Intent(this, HeartRateActivity.class);
 			startActivity(intent);
 			break;
 		default:

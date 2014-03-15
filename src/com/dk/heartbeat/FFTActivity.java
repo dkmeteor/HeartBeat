@@ -3,6 +3,7 @@ package com.dk.heartbeat;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,6 +19,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
@@ -25,6 +27,13 @@ import android.widget.Toast;
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
 
 public class FFTActivity extends Activity {
+	public static final String FFT_R = Environment
+			.getExternalStorageDirectory() + File.separator + "FFT_R";
+	public static final String FFT_G = Environment
+			.getExternalStorageDirectory() + File.separator + "FFT_G";
+	public static final String FFT_B = Environment
+			.getExternalStorageDirectory() + File.separator + "FFT_B";
+
 	private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
 	/** The main renderer that includes all the renderers customizing a chart. */
 	/** The most recently added series. */
@@ -44,7 +53,8 @@ public class FFTActivity extends Activity {
 		setContentView(com.dk.heartbeat.R.layout.xy_chart);
 
 		int[] colors = new int[] { Color.RED, Color.GREEN, Color.BLUE };
-		PointStyle[] styles = new PointStyle[] { PointStyle.POINT,PointStyle.POINT,PointStyle.POINT };
+		PointStyle[] styles = new PointStyle[] { PointStyle.POINT,
+				PointStyle.POINT, PointStyle.POINT };
 		mRenderer = new XYMultipleSeriesRenderer(1);
 		setRenderer(mRenderer, colors, styles);
 
@@ -104,33 +114,27 @@ public class FFTActivity extends Activity {
 	}
 
 	private void FFT() {
-		String text;
 		try {
 			File inputR = new File(DecodeActivity.log_R);
 			String textR = readTextFile(new FileInputStream(inputR));
 			String[] dataR = textR.split(",");
 
 			File inputG = new File(DecodeActivity.log_G);
-			String  textG= readTextFile(new FileInputStream(inputG));
+			String textG = readTextFile(new FileInputStream(inputG));
 			String[] dataG = textG.split(",");
-			
+
 			File inputB = new File(DecodeActivity.log_B);
-			String  textB= readTextFile(new FileInputStream(inputB));
+			String textB = readTextFile(new FileInputStream(inputB));
 			String[] dataB = textB.split(",");
-			
-			
+
 			double[] fftInput = new double[768];
 			for (int i = 0; i < 768; i++) {
 				if (i < 256) {
 					fftInput[i] = Double.parseDouble(dataR[i]);
-				}
-				else if(i>=256 && i<512)
-				{
-					fftInput[i] = Double.parseDouble(dataG[i-256]);
-				}
-				else if(i>=512 && i<768)
-				{
-					fftInput[i] = Double.parseDouble(dataB[i-512]);
+				} else if (i >= 256 && i < 512) {
+					fftInput[i] = Double.parseDouble(dataG[i - 256]);
+				} else if (i >= 512 && i < 768) {
+					fftInput[i] = Double.parseDouble(dataB[i - 512]);
 				}
 			}
 			double[] fftOutput = new double[768];
@@ -139,34 +143,38 @@ public class FFTActivity extends Activity {
 			temp = fftInput.clone();
 			JadeRJni.doSth(fftInput, fftOutput);
 
-			DoubleFFT_1D fft = new DoubleFFT_1D(4096);
-			double[] o1=new double[4096];
-			double[] o2=new double[4096];
-			double[] o3=new double[4096];
+			DoubleFFT_1D fft = new DoubleFFT_1D(256);
+			double[] o1 = new double[4096];
+			double[] o2 = new double[4096];
+			double[] o3 = new double[4096];
 			System.arraycopy(fftInput, 0, o1, 0, 256);
 			System.arraycopy(fftInput, 256, o2, 0, 256);
 			System.arraycopy(fftInput, 512, o3, 0, 256);
-			
-//			fft.realForward(fftInput);
-//			fft.realForward(temp);
-//			fft.realForward(fftOutput);
+
+			// fft.realForward(fftInput);
+			// fft.realForward(temp);
+			// fft.realForward(fftOutput);
 			fft.realForward(o1);
 			fft.realForward(o2);
 			fft.realForward(o3);
-			for (int i = 0; i < 4096; i++) {
-//				System.out.println("" + fftInput[i]);
+			for (int i = 0; i < 256; i++) {
+				// System.out.println("" + fftInput[i]);
 				if (Math.abs(o1[i]) < 100) {
 					mCurrentSeriesFFT.add(i, Math.abs(o1[i]));
-					
+
 				}
 				if (Math.abs(o2[i]) < 100) {
-				mCurrentSeriesFFT2.add(i, Math.abs((o2[i])));
+					mCurrentSeriesFFT2.add(i, Math.abs((o2[i])));
 				}
-				
+
 				if (Math.abs(o3[i]) < 100) {
 					mCurrentSeriesFFT3.add(i, Math.abs(o3[i]));
-					}
+				}
 			}
+
+			writeDataToFile(FFT_R, o1);
+			writeDataToFile(FFT_G, o2);
+			writeDataToFile(FFT_B, o3);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -216,6 +224,28 @@ public class FFTActivity extends Activity {
 			r.setColor(colors[i]);
 			r.setPointStyle(styles[i]);
 			renderer.addSeriesRenderer(r);
+		}
+	}
+
+	private void writeDataToFile(String path, double[] data) {
+		String rString = "";
+		for (int j = 0; j < data.length; j++) {
+			// System.out.println("" + R[j]);
+			rString += (data[j] + ",");
+		}
+		rString = rString.substring(0, rString.length() - 1);
+		try {
+			File f = new File(path);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(f);
+			fw.write(rString);
+			fw.flush();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
