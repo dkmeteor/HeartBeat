@@ -14,6 +14,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		findViewById(R.id.decode).setOnClickListener(this);
 		findViewById(R.id.fft).setOnClickListener(this);
 		findViewById(R.id.bar_chat).setOnClickListener(this);
+		findViewById(R.id.average).setOnClickListener(this);
 	}
 
 	@Override
@@ -31,6 +32,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			break;
 		case R.id.bar_chat:
 			intent = new Intent(this, HeartRateActivity.class);
+			startActivity(intent);
+			break;
+		case R.id.average:
+			intent = new Intent(this, AverageActivity.class);
 			startActivity(intent);
 			break;
 		default:

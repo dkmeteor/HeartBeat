@@ -28,7 +28,11 @@
             android:name="com.dk.heartbeat.HeartRateActivity"
             android:label="@string/app_name" >
         </activity>
-        
+        <activity
+            android:name="com.dk.heartbeat.AverageActivity"
+            android:label="@string/app_name" >
+        </activity>
+        AverageActivity
         <activity
             android:name="com.dk.heartbeat.MainActivity"
             android:label="@string/app_name" >

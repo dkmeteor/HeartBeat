@@ -65,7 +65,7 @@ public class StackedBarChart extends AbstractDemoChart {
 		values.add(datas1);
 		values.add(datas2);
 		values.add(datas3);
-		int[] colors = new int[] { 0x77ff0000, 0x7700ff00, 0x770000ff };
+		int[] colors = new int[] { 0x00ff0000, 0x7700ff00, 0x000000ff };
 		XYMultipleSeriesRenderer renderer = buildBarRenderer(colors);
 		setChartSettings(renderer, "Heart Rate", "sample", "Units sold", 0.5,
 				12.5, 0, 120, Color.GRAY, Color.LTGRAY);
@@ -90,4 +90,5 @@ public class StackedBarChart extends AbstractDemoChart {
 		return null;
 	}
 
+	
 }

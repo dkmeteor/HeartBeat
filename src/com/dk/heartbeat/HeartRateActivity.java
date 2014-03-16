@@ -41,10 +41,16 @@ public class HeartRateActivity extends Activity {
 
 		continer.addView(new StackedBarChart().createView(this, datas_R,
 				datas_G, datas_B));
-		
-		System.out.println("R:"+avarge(datas_R));
-		System.out.println("G:"+avarge(datas_G));
-		System.out.println("B:"+avarge(datas_B));
+
+		System.out.println("R:" + avarge(datas_R));
+		System.out.println("G:" + avarge(datas_G));
+		System.out.println("B:" + avarge(datas_B));
+
+		double[] fleet = fleetData(datas_R);
+
+		for (double d : fleet) {
+			System.out.println(d);
+		}
 	}
 
 	private double avarge(double[] datas) {
@@ -52,7 +58,7 @@ public class HeartRateActivity extends Activity {
 		for (int i = 0; i < datas.length; i++) {
 			sum += datas[i];
 		}
-		return sum/datas.length;
+		return sum / datas.length;
 	}
 
 	private void getData() throws FileNotFoundException {
@@ -94,12 +100,12 @@ public class HeartRateActivity extends Activity {
 		double[] oo1 = new double[4096];
 		double[] oo2 = new double[4096];
 		double[] oo3 = new double[4096];
-		for (int i = 0; i < 300 / 30; i++) {
-			for (int j = 0; j < 30; j++) {
+		for (int i = 0; i < 60 / 2; i++) {
+			for (int j = 0; j < 150; j++) {
 
-				oo1[j] = o1[50 * i + j];
-				oo2[j] = o2[50 * i + j];
-				oo3[j] = o3[50 * i + j];
+				oo1[j] = o1[5 * i + j];
+				oo2[j] = o2[5 * i + j];
+				oo3[j] = o3[5 * i + j];
 
 			}
 
@@ -117,7 +123,7 @@ public class HeartRateActivity extends Activity {
 	private double getArea(double[] array) {
 		// 120>5/4096*max*60>40
 		int max = 1638;
-		int min = 546;
+		int min = 614;
 		double a = 0;
 		int index = 0;
 		for (int i = min; i < max; i++) {
@@ -155,5 +161,23 @@ public class HeartRateActivity extends Activity {
 
 		return outputStream.toString();
 
+	}
+
+	private double[] fleetData(double[] data) {
+		double[] res = new double[data.length];
+
+		for (int i = 0; i < data.length; i++) {
+			res[i] = sum(data, i) / i;
+		}
+
+		return res;
+	}
+
+	private double sum(double[] data, int n) {
+		double sum = 0;
+		for (int i = 0; i < n; i++) {
+			sum += data[i];
+		}
+		return sum;
 	}
 }
