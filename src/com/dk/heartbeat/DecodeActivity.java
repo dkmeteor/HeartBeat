@@ -60,7 +60,7 @@ public class DecodeActivity extends Activity {
 	// .getExternalStorageDirectory()
 	// + "/DCIM/Camera/VID_20140216_011502.mp4";
 
-	 private static final String path = "/mnt/sdcard/Download/VID_20140307_231413.mov";
+//	 private static final String path = "/mnt/sdcard/Download/VID_20140307_231413.mov";
 //	private static final String path = "/mnt/sdcard/Download/VID_20140216_011502.mp4";
 	// private static final String log =
 	// Environment.getExternalStorageDirectory()
@@ -96,7 +96,7 @@ public class DecodeActivity extends Activity {
 		mDataset.addSeries(mCurrentSeriesG);
 		mDataset.addSeries(mCurrentSeriesB);
 
-		File video = new File(path);
+		File video = new File(MainContext.current_file_path);
 		if (!video.exists()) {
 			Toast.makeText(this, "file doesn't exist", 200).show();
 			return;
@@ -160,14 +160,14 @@ public class DecodeActivity extends Activity {
 		private void decode() {
 
 			FFmpegMediaMetadataRetriever retriever = new FFmpegMediaMetadataRetriever();
-			retriever.setDataSource(path);
-			// È¡µÃÊÓÆµµÄ³¤¶È(µ¥Î»ÎªºÁÃë)
+			retriever.setDataSource(MainContext.current_file_path);
+			// È¡ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä³ï¿½ï¿½ï¿½(ï¿½ï¿½Î»Îªï¿½ï¿½ï¿½ï¿½)
 			String time = retriever
 					.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);
 
-			// È¡µÃÊÓÆµµÄ³¤¶È(µ¥Î»ÎªÃë)
+			// È¡ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä³ï¿½ï¿½ï¿½(ï¿½ï¿½Î»Îªï¿½ï¿½)
 			int seconds = Integer.valueOf(time) / 1000;
-			// µÃµ½Ã¿Ò»ÃëÊ±¿ÌµÄbitmap±ÈÈçµÚÒ»Ãë,µÚ¶þÃë
+			// ï¿½Ãµï¿½Ã¿Ò»ï¿½ï¿½Ê±ï¿½Ìµï¿½bitmapï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½Ú¶ï¿½ï¿½ï¿½
 			R = new int[seconds * 5];
 			G = new int[seconds * 5];
 			B = new int[seconds * 5];
@@ -188,7 +188,7 @@ public class DecodeActivity extends Activity {
 					bitmap.recycle();
 					addFrameData(i, pixels);
 				} else {
-					// È¡µÃÊÓÆµµÄ³¤¶È(µ¥Î»ÎªºÁÃë)
+					// È¡ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä³ï¿½ï¿½ï¿½(ï¿½ï¿½Î»Îªï¿½ï¿½ï¿½ï¿½)
 					System.out.println("error");
 					return;
 				}
